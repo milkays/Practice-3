@@ -3,28 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Practice3.Controllers
 {
     [ApiController]
-    [Route("/api/students")]
-    public class StudentsController : ControllerBase
+    [Route("/api/info")]
+    public class InfoController : ControllerBase
     {
-        public StudentsController()
+        private readonly IConfiguration _config;
+        public InfoController(IConfiguration config)
         {
+            _config = config;
         }
-
         [HttpGet]
-        public List<Student> GetStudents()
+
+        public string GetInfo()
         {
-            List<Student> listStudents = new List<Student>();
-            listStudents.Add(new Student { Name = "Mayra Oropeza" });
-            listStudents.Add(new Student { Name = "Rafaela Gumiel" });
-            listStudents.Add(new Student { Name = "Mauricio Angulo" });
-            listStudents.Add(new Student { Name = "Fabricio Fernandez" });
-            listStudents.Add(new Student { Name = "Camila Medina" });
-            return listStudents;
+            string projectTitle = _config.GetSection("ProjectTitle").Value;
+            string enviromentName = _config.GetSection("EnvironmentName").Value;
+            string dbConnection = _config.GetConnectionString("Database");
+            Console.Out.WriteLine($"Connection string to ... {dbConnection}");
+            return $"ProjectTitle: {projectTitle} \n" +
+                $"EnvironmentName: {enviromentName}"; ;
         }
 
         [HttpPost]
